@@ -8,14 +8,17 @@ import {
 } from "./engine-checkers";
 
 const verifyEngines =
-  (errorReporter: ErrorReporter, useParent: boolean) =>
+  (errorReporter: ErrorReporter, onlyParent: boolean) =>
   (project: Project): void => {
     if (process.env.PLUGIN_YARN_ENGINES_DISABLE != null) {
       return;
     }
 
-    const { engines = {} } = project.getWorkspaceByCwd(useParent ? project.cwd : project.configuration.startingCwd)
-      .manifest.raw;
+    const confParent = project.getWorkspaceByCwd(project.cwd).manifest.raw;
+    const confChild = project.getWorkspaceByCwd(project.configuration.startingCwd).manifest.raw;
+
+    const engines = (onlyParent ? confParent.engines : { ...confParent.engines, ...confChild.engines }) ?? {};
+
     const options: EngineCheckerOptions = { project, errorReporter };
     const engineCheckers: EngineChecker[] = [new NodeEngineChecker(options), new YarnEngineChecker(options)];
     engineCheckers.forEach((engineChecker) => engineChecker.verifyEngine(engines));
@@ -23,7 +26,7 @@ const verifyEngines =
 
 const plugin: Plugin = {
   hooks: {
-    validateProject: verifyEngines(ErrorReporter.Yarn, false),
+    validateProject: verifyEngines(ErrorReporter.Yarn, true),
     setupScriptEnvironment: verifyEngines(ErrorReporter.Console, true),
   },
 };
