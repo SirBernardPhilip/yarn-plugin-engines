@@ -17,7 +17,13 @@ const verifyEngines =
     const confParent = project.getWorkspaceByCwd(project.cwd).manifest.raw;
     const confChild = project.getWorkspaceByCwd(project.configuration.startingCwd).manifest.raw;
 
+    console.log("parent", confParent.engines);
+    console.log("child", confChild.engines);
+    console.log("onlyParent", onlyParent);
+
     const engines = (onlyParent ? confParent.engines : { ...confParent.engines, ...confChild.engines }) ?? {};
+
+    console.log("engines", engines)
 
     const options: EngineCheckerOptions = { project, errorReporter };
     const engineCheckers: EngineChecker[] = [new NodeEngineChecker(options), new YarnEngineChecker(options)];
