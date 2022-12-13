@@ -27,7 +27,7 @@ const verifyEngines =
 const plugin: Plugin = {
   hooks: {
     validateProject: verifyEngines(ErrorReporter.Yarn, true),
-    setupScriptEnvironment: verifyEngines(ErrorReporter.Console, true),
+    setupScriptEnvironment: verifyEngines(ErrorReporter.Console, false),
   },
 };
 
