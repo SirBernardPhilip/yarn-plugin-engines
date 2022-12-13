@@ -15,6 +15,7 @@ const verifyEngines =
     }
 
     const { engines = {} } = project.getWorkspaceByCwd(project.cwd).manifest.raw;
+    console.log("engines", engines)
     const options: EngineCheckerOptions = { project, errorReporter };
     const engineCheckers: EngineChecker[] = [new NodeEngineChecker(options), new YarnEngineChecker(options)];
     engineCheckers.forEach((engineChecker) => engineChecker.verifyEngine(engines));
