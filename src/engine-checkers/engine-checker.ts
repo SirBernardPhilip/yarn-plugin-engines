@@ -20,8 +20,13 @@ export abstract class EngineChecker {
     this.errorReporter = options.errorReporter;
   }
 
-  protected throwWrongEngineError = (currentVersion: string, requiredVersion: string): void => {
-    const message = this.formatErrorMessage(currentVersion, requiredVersion);
+  protected throwWrongEngineError = (
+    currentVersion: string,
+    requiredVersion: string,
+    command: string,
+    packageOrigin: string
+  ): void => {
+    const message = this.formatErrorMessage(currentVersion, requiredVersion, command, packageOrigin);
     this.throwError(message);
   };
 
@@ -46,18 +51,33 @@ export abstract class EngineChecker {
     process.exit(1);
   };
 
-  protected formatErrorMessage = (currentVersion: string, requiredVersion: string): string => {
+  protected formatErrorMessage = (
+    currentVersion: string,
+    requiredVersion: string,
+    command: string,
+    packageOrigin: string
+  ): string => {
     const { configuration } = this.project;
     const engineText = formatUtils.applyStyle(
       configuration,
       formatUtils.pretty(configuration, this.engine, "green"),
       2
     );
+    const commandText = formatUtils.applyStyle(
+      configuration,
+      formatUtils.pretty(configuration, `[${command}]:`, "yellow"),
+      2
+    );
+    const packageOriginText = formatUtils.applyStyle(
+      configuration,
+      formatUtils.pretty(configuration, `(${packageOrigin}): `, "yellow"),
+      2
+    );
     const currentVersionText = formatUtils.pretty(configuration, currentVersion, "cyan");
     const requiredVersionText = formatUtils.pretty(configuration, requiredVersion, "cyan");
-    const message = `The current ${engineText} version ${currentVersionText} does not satisfy the required version ${requiredVersionText}.`;
+    const message = `${commandText} The current ${engineText} version ${currentVersionText} does not satisfy the required version ${requiredVersionText} ${packageOriginText}.`;
     return formatUtils.pretty(configuration, message, "red");
   };
 
-  abstract verifyEngine(engines: Record<string, string>): void;
+  abstract verifyEngine(engines: Record<string, string>, command: string, packageOrigin: string): void;
 }

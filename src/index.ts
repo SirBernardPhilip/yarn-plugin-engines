@@ -22,7 +22,13 @@ const verifyEngines =
     if (!ignoreEngines.includes(env["npm_lifecycle_event"])) {
       const options: EngineCheckerOptions = { project, errorReporter };
       const engineCheckers: EngineChecker[] = [new NodeEngineChecker(options), new YarnEngineChecker(options)];
-      engineCheckers.forEach((engineChecker) => engineChecker.verifyEngine(engines));
+      engineCheckers.forEach((engineChecker) =>
+        engineChecker.verifyEngine(
+          engines,
+          isValidate ? "install" : env["npm_lifecycle_event"],
+          isValidate ? project.cwd : project.configuration.startingCwd
+        )
+      );
     }
   };
 

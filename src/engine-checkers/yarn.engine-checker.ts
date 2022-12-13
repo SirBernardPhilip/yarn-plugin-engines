@@ -7,13 +7,13 @@ export class YarnEngineChecker extends EngineChecker {
     return "Yarn";
   }
 
-  verifyEngine(engines: Record<string, string>): void {
+  verifyEngine(engines: Record<string, string>, command: string, packageOrigin: string): void {
     const yarnRequiredVersion = engines.yarn;
     if (yarnRequiredVersion == null) {
       return;
     }
     if (!satisfies(YarnVersion, yarnRequiredVersion, { includePrerelease: true })) {
-      this.throwWrongEngineError(YarnVersion, yarnRequiredVersion);
+      this.throwWrongEngineError(YarnVersion, yarnRequiredVersion, command, packageOrigin);
     }
   }
 }
