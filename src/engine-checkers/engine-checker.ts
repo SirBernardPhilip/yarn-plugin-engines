@@ -70,12 +70,18 @@ export abstract class EngineChecker {
     );
     const packageOriginText = formatUtils.applyStyle(
       configuration,
-      formatUtils.pretty(configuration, `(${packageOrigin}): `, "yellow"),
+      formatUtils.pretty(configuration, `(${packageOrigin})`, "yellow"),
       2
     );
     const currentVersionText = formatUtils.pretty(configuration, currentVersion, "cyan");
     const requiredVersionText = formatUtils.pretty(configuration, requiredVersion, "cyan");
-    const message = `${commandText} The current ${engineText} version ${currentVersionText} does not satisfy the required version ${requiredVersionText} ${packageOriginText}.`;
+    const message = `
+      ${commandText} The current ${engineText} version ${currentVersionText} does not satisfy the required version ${requiredVersionText} ${packageOriginText}.${
+      !["raw command", "install"].includes(command)
+        ? ""
+        : "\n      Note: Non-script commands can't be excluded through 'ignoreEngines'."
+    }
+      `;
     return formatUtils.pretty(configuration, message, "red");
   };
 
