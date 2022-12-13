@@ -8,8 +8,8 @@ import {
 } from "./engine-checkers";
 
 const verifyEngines =
-  (errorReporter: ErrorReporter, onlyParent: boolean) =>
-  (project: Project): void => {
+  (errorReporter: ErrorReporter, isValidate: boolean) =>
+  (project: Project, env: Record<string, string>): void => {
     if (process.env.PLUGIN_YARN_ENGINES_DISABLE != null) {
       return;
     }
@@ -17,11 +17,13 @@ const verifyEngines =
     const confParent = project.getWorkspaceByCwd(project.cwd).manifest.raw;
     const confChild = project.getWorkspaceByCwd(project.configuration.startingCwd).manifest.raw;
 
-    const engines = (onlyParent ? confParent.engines : { ...confParent.engines, ...confChild.engines }) ?? {};
-
-    const options: EngineCheckerOptions = { project, errorReporter };
-    const engineCheckers: EngineChecker[] = [new NodeEngineChecker(options), new YarnEngineChecker(options)];
-    engineCheckers.forEach((engineChecker) => engineChecker.verifyEngine(engines));
+    const engines = (isValidate ? confParent.engines : { ...confParent.engines, ...confChild.engines }) ?? {};
+    const ignoreEngines = isValidate ? [] : confChild.ignoreEngines ?? [];
+    if (!ignoreEngines.includes(env["npm_lifecycle_event"])) {
+      const options: EngineCheckerOptions = { project, errorReporter };
+      const engineCheckers: EngineChecker[] = [new NodeEngineChecker(options), new YarnEngineChecker(options)];
+      engineCheckers.forEach((engineChecker) => engineChecker.verifyEngine(engines));
+    }
   };
 
 const plugin: Plugin = {
