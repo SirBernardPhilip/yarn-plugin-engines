@@ -1,11 +1,12 @@
 # yarn-plugin-engines
 
+Fork of the original [repo](https://github.com/devoto13/yarn-plugin-engines) by devoto13 to support workspaces.
 Yarn Berry plugin to enforce Node version.
 
 ## Installation
 
 ```sh
-$ yarn plugin import https://raw.githubusercontent.com/devoto13/yarn-plugin-engines/main/bundles/%40yarnpkg/plugin-engines.js
+$ yarn plugin import https://raw.githubusercontent.com/SirBernardPhilip/yarn-plugin-engines/main/bundles/%40yarnpkg/plugin-engines.js
 ```
 
 ## Usage
